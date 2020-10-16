@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../services/data.service';
 import { FormGroup, FormControl, Validators } from '@angular/forms';
+import { ErrorConstants } from '../../shared/constants/error-constants';
 
 @Component({
   selector: 'app-enrollees-list',
@@ -12,6 +13,7 @@ export class EnrolleesListComponent implements OnInit {
   users: Array<any> = [];
   openModal: boolean;
   userForm: FormGroup;
+  errorMsg = ErrorConstants.errorMsg;
 
   constructor(
     private dataService: DataService,
@@ -23,16 +25,27 @@ export class EnrolleesListComponent implements OnInit {
     this.getAllEnrollees();
   }
 
+  /**
+   * This method is to get all enrollees details to create the list
+   *
+   * @memberof EnrolleesListComponent
+   */
   getAllEnrollees(): void {
     this.dataService.getEnrollees().subscribe(
       (data: any) => {
         this.users = data;
       },
       (err: any) => {
-        console.log('error occurred', err);
+        console.log(`${this.errorMsg}, ${err}`);
       });
   }
 
+  /**
+   * This method opens 'Edit Enrollee Details' Modal and get the specific enrollee detail
+   *
+   * @param {string} id
+   * @memberof EnrolleesListComponent
+   */
   onEdit(id: string): void {
     this.openModal = true;
     this.dataService.getEnrolleeById(id).subscribe(
@@ -40,11 +53,16 @@ export class EnrolleesListComponent implements OnInit {
         this.patchUserDetails(data);
       },
       (err: any) => {
-        console.log('error occurred', err);
+        console.log(`${this.errorMsg}, ${err}`);
       }
     );
   }
 
+  /**
+   * This method creates form, used in Modal.
+   *
+   * @memberof EnrolleesListComponent
+   */
   createUserForm(): void {
     this.userForm = new FormGroup({
       id: new FormControl(''),
@@ -54,6 +72,12 @@ export class EnrolleesListComponent implements OnInit {
     });
   }
 
+  /**
+   * Patch form values with the api response
+   *
+   * @param {*} data
+   * @memberof EnrolleesListComponent
+   */
   patchUserDetails(data: any): void {
     if (data && data.id) {
       const patchUserFields: any = {
@@ -66,22 +90,32 @@ export class EnrolleesListComponent implements OnInit {
     }
   }
 
+  /**
+   * Close 'Edit Enrollee Details' Modal
+   *
+   * @memberof EnrolleesListComponent
+   */
   cancelEditing(): void {
     this.openModal = false;
   }
 
+  /**
+   * Get the latest form values and make API call to update data
+   *
+   * @memberof EnrolleesListComponent
+   */
   saveEditing(): void {
     this.openModal = false;
     if (this.userForm && this.userForm.value) {
       this.dataService.updateEnrollee(this.userForm.value).subscribe(
         (response: any) => {
           const index = this.users.findIndex((ele) => ele.id === response.id);
-          if (index !== -1){
+          if (index !== -1) {
             this.users[index] = response;
           }
         },
         (err: any) => {
-          console.log('error occurred', err);
+          console.log(`${this.errorMsg}, ${err}`);
         }
       );
     }
