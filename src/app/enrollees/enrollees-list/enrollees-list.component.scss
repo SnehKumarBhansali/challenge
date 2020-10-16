@@ -1,0 +1,22 @@
+.main-container {
+    padding: 1rem 2rem;
+    
+    .heading {
+        font-size: 1rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+        margin-top: 1rem;
+    }
+}
+
+.user-form {
+    ::ng-deep .clr-input-wrapper {
+        max-width: none;
+
+        .clr-input {
+            min-width: 80%;
+        }
+    }
+}

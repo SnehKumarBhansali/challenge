@@ -1,0 +1,65 @@
+<div class="main-container">
+  <span class="heading">List of Enrollees</span>
+
+  <div>
+    <clr-datagrid>
+      <clr-dg-column>User ID</clr-dg-column>
+      <clr-dg-column>Name</clr-dg-column>
+      <clr-dg-column>Date of Birth</clr-dg-column>
+      <clr-dg-column>Status</clr-dg-column>
+
+      <clr-dg-row *clrDgItems="let user of users" [clrDgItem]="user">
+        <clr-dg-action-overflow>
+          <button class="action-item" (click)="onEdit(user.id)">Edit</button>
+        </clr-dg-action-overflow>
+        <clr-dg-cell>{{user.id}}</clr-dg-cell>
+        <clr-dg-cell>{{user.name}}</clr-dg-cell>
+        <clr-dg-cell>{{user.dateOfBirth}}</clr-dg-cell>
+        <clr-dg-cell>
+          <span class="label label-success" *ngIf="user.active">Active</span>
+          <span class="label label-danger" *ngIf="!user.active">Inactive</span>
+        </clr-dg-cell>
+      </clr-dg-row>
+
+      <clr-dg-footer>
+        <clr-dg-pagination #pagination [clrDgPageSize]="10" [clrDgTotalItems]="users?.length">
+          <clr-dg-page-size [clrPageSizeOptions]="[10, 20, 30]">
+            Objects per page</clr-dg-page-size>
+          {{pagination.firstItem + 1}} - {{pagination.lastItem + 1}}
+          of {{pagination.totalItems}} Objects
+        </clr-dg-pagination>
+      </clr-dg-footer>
+    </clr-datagrid>
+  </div>
+</div>
+
+<clr-modal [(clrModalOpen)]="openModal">
+  <h3 class="modal-title">Edit Enrollee</h3>
+  <div class="modal-body user-form">
+    <form clrForm [formGroup]="userForm">
+      <clr-input-container>
+        <label class="clr-col-4">Id</label>
+        <input clrInput placeholder="Id" class="clr-col-8" formControlName="id" [attr.disabled]="true"/>
+      </clr-input-container>
+      <clr-input-container>
+        <label class="clr-col-4">Name</label>
+        <input clrInput placeholder="Name" class="clr-col-8" formControlName="name" />
+      </clr-input-container>
+      <clr-input-container>
+        <label class="clr-col-4">DoB</label>
+        <input clrInput placeholder="DoB" class="clr-col-8" formControlName="dob" [attr.disabled]="true"/>
+      </clr-input-container>
+      <clr-toggle-container clrInline>
+        <label class="clr-col-4">Status</label>
+        <clr-toggle-wrapper>
+          <input type="checkbox" clrToggle value="true" class="clr-col-8" formControlName="status" />
+          <label>Active</label>
+        </clr-toggle-wrapper>
+      </clr-toggle-container>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-outline" (click)="cancelEditing()">Cancel</button>
+    <button type="button" class="btn btn-primary" [disabled]="!userForm?.valid" (click)="saveEditing()">Save</button>
+  </div>
+</clr-modal>
